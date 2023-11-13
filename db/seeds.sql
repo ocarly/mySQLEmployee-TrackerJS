@@ -1,4 +1,4 @@
-USE employeeTracker_db;
+USE empTracker_db;
 
 -- empDepartment
 INSERT INTO empDepartment (name)
