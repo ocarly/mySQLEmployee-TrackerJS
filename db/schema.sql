@@ -12,7 +12,7 @@ CREATE TABLE empRole (
   title VARCHAR(30) NULL,
   salary DECIMAL(10.3) NULL,
   department_id INT NULL,
-  FOREIGN KEY (department_id) REFERENCES department(id),
+  FOREIGN KEY (department_id) REFERENCES empDepartment(id),
   PRIMARY KEY (id)
 );
 

@@ -1,6 +1,7 @@
 //dependencies
 const inquirer = require("inquirer");
-const mysql = require("mysql");
+const mysql = require("mysql2");
+const logo = require("asciiart-logo")
 
 require("console.table");
 
@@ -8,18 +9,20 @@ require("dotenv").config();
 
 
 
-const db = mysql.createConnection({
+const dbConnection = mysql.createConnection({
     host: 'localhost',
-    port: 3001,
     user: 'root',
     password: process.env.DB_PASSWORD,
     database: 'empTracker_db'
-},
-console.log("Connected to empTracker_db Database.")
-);
+});
+dbConnection.connect(function (err) {
+    if (err) throw(err);
+    console.log("Connected to empTracker_db Database.");
+    appStart();
+});
 
 function appStart(){
-    const someText = logo({ name: "Employee Roledex \n"}).render();
+    const someText = logo({ name: "Employee Rolodex \n"}).render();
     console.log(someText);
     inquirer
      .prompt([
@@ -27,7 +30,7 @@ function appStart(){
           type: "list",
           name: "openingMessage",
           message: "Please select from the following:",
-          selections: [
+          choices: [
             "viewAllEmployees",
             "viewAllDepeartments",
             "viewAllRoles",
@@ -38,8 +41,7 @@ function appStart(){
             "quit",
           ],
         },
-     ])
-     .then((inquirerResponse) => {
+     ]).then((inquirerResponse) => {
         console.log("Selected User: " + inquirerResponse.openingMessage);
         let choices = inquirerResponse.openingMessage;
         switch (choices) {
@@ -70,17 +72,36 @@ function appStart(){
         }
      });
 }
+
+
 function viewAllEmployees() {
-    const query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-    FROM employee
-    LEFT JOIN employee manager on manager.id = employee.manager_id
-    INNER JOIN role ON (role.id = employee.role_id)
-    INNER JOIN department ON (department.id = role.department_id)
-    ORDER BY employee.id;`;
-    connection.query(query, (err, res) => {
+    const query = `SELECT * FROM empIdentity`; 
+    dbConnection.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW ALL EMPLOYEES');
+        console.log('\n');
+        console.table(res);
+        appStart();
+    });
+}
+function viewAllDepeartments() {
+    const query = `SELECT * FROM empDepartment`;
+    dbConnection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('VIEW EMPLOYEE BY DEPARTMENT');
+        console.log('\n');
+        console.table(res);
+        appStart();
+    });
+}
+function viewAllRoles() {
+    const query = `SELECT * FROM empRole`;
+    dbConnection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('VIEW ALL EMPLOYEE ROLES');
         console.log('\n');
         console.table(res);
         appStart();
