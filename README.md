@@ -1,6 +1,7 @@
 # mySQLEmployee-TrackerJS
-####An application designed to handle employee management for a company using Node.js, Inquirer, and MySQL.
-#####This command-line tool allows users to:
+An application designed to handle employee management for a company using Node.js, Inquirer, and MySQL.
+
+This command-line tool allows users to:
 Create, view, and delete departments, roles, and employees.
 Update employee roles.
 View employees based on their managers.
