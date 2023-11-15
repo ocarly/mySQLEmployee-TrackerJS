@@ -48,8 +48,8 @@ function appStart(){
             case "viewAllEmployees":
                 viewAllEmployees();
                 break;
-            case "viewAllDepeartments":
-                viewAllDepeartments();
+            case "viewAllDepartments":
+                viewAllDepartments();
                 break;
             case "viewAllRoles":
                 viewAllRoles();
@@ -85,7 +85,7 @@ function viewAllEmployees() {
         appStart();
     });
 }
-function viewAllDepeartments() {
+function viewAllDepartments() {
     const query = `SELECT * FROM empDepartment`;
     dbConnection.query(query, (err, res) => {
         if (err) throw err;
@@ -107,3 +107,77 @@ function viewAllRoles() {
         appStart();
     });
 }
+
+function addADeparment() {
+    inquirer
+	.prompt({      
+        type: "input",
+        message: "What is the name of the department?",
+        name: "deptName"
+    }).then(function(answer){
+        dbConnection.query("INSERT INTO empDepartment (name) VALUES (?)", [answer.deptName] , function(err, res) {
+            if (err) throw err;
+            console.table(res)
+            appStart()
+    })
+    })
+}
+
+function addARole() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What's the employee's role?",
+          name: "roleName"
+        },
+        {
+          type: "input",
+          message: "$alary?",
+          name: "salaryTotal"
+        },
+        {
+          type: "input",
+          message: "What is the department ID number?",
+          name: "deptID"
+        }
+      ])
+      .then(function(answer) {
+        dbConnection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.roleName, answer.salaryTotal, answer.deptID], function(err, res) {
+          if (err) throw err;
+          console.table(res);
+          appStart();
+        });
+      });
+  }
+  function addAEmployee() {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "First Name?",
+          name: "firstName"
+        },
+        {
+          type: "input",
+          message: "Last Name?",
+          name: "lastName"
+        },
+        {
+          type: "input",
+          message: "Employee Role ID?",
+          name: "roleID"
+        },
+        {
+          type: "input",
+          message: "Manager ID Number?",
+          name: "managerID"
+        }
+      ]).then(function(answer) {
+       dbConnection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.firstName, answer.lastName, answer.roleID, answer.managerID], function(err, res) {
+          if (err) throw err;
+          console.table(res);
+          appStart();
+        });
+      });
+  }
