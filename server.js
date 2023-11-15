@@ -126,105 +126,102 @@ function addADeparment() {
 }
 
 function addARole() {
-    dbConnection.query("SELECT * FROM empDepartment", function (err, res) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-  
-      const empDepList = res.map((department) => ({
-        value: department.id,
-        name: department.name,
-      }));
-  
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            message: "What's the employee's role?",
-            name: "roleName",
-          },
-          {
-            type: "input",
-            message: "Salary?",
-            name: "salaryTotal",
-          },
-          {
-            type: "list", // Assuming you want to select from a list
-            message: "Select the department:",
-            name: "deptID",
-            choices: empDepList,
-          },
-        ])
-        .then(function (answer) {
-          dbConnection.query(
-            "INSERT INTO empRole (title, salary, department_id) VALUES (?, ?, ?)",
-            [answer.roleName, answer.salaryTotal, answer.deptID],
-            function (err, res) {
-              if (err) {
-                console.log(err);
-                return;
-              }
-              viewAllRoles(),
-              appStart();
+  dbConnection.query("SELECT * FROM empDepartment", function (err, res) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    const empDepList = res.map((department) => ({
+      value: department.id,
+      name: department.name,
+    }));
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "What's the employee's role?",
+          name: "roleName",
+        },
+        {
+          type: "input",
+          message: "Salary?",
+          name: "salaryTotal",
+        },
+        {
+          type: "list", 
+          message: "Select the department:",
+          name: "deptID",
+          choices: empDepList,
+        },
+      ])
+      .then(function (answer) {
+        dbConnection.query(
+          "INSERT INTO empRole (title, salary, department_id) VALUES (?, ?, ?)",
+          [answer.roleName, answer.salaryTotal, answer.deptID],
+          function (err, res) {
+            if (err) {
+              console.log(err);
+              return;
             }
-          );
-        });
-    });
-  }
-  function addAEmployee() {
-    // Fetch roles from the database
-    dbConnection.query("SELECT * FROM empRole", function (err, res) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-  
-      const roleList = res.map((role) => ({
-        value: role.id,
-        name: role.title,
-      }));
-  
-      inquirer
-        .prompt([
-          {
-            type: "input",
-            message: "First Name?",
-            name: "firstName",
-          },
-          {
-            type: "input",
-            message: "Last Name?",
-            name: "lastName",
-          },
-          {
-            type: "list", // Use 'list' type for a dynamic list of choices
-            message: "Select Employee Role:",
-            name: "roleID",
-            choices: roleList,
-          },
-          {
-            type: "input",
-            message: "Manager ID Number?",
-            name: "managerID",
-          },
-        ])
-        .then(function (answer) {
-          dbConnection.query(
-            "INSERT INTO empIdentity (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
-            [answer.firstName, answer.lastName, answer.roleID, answer.managerID],
-            function (err, res) {
-              if (err) {
-                console.log(err);
-                return;
-              }
-              viewAllEmployees(),
-              appStart();
+            viewAllRoles(), appStart();
+          }
+        );
+      });
+  });
+}
+function addAEmployee() {
+  // Fetch roles from the database
+  dbConnection.query("SELECT * FROM empRole", function (err, res) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    const roleList = res.map((role) => ({
+      value: role.id,
+      name: role.title,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          message: "First Name?",
+          name: "firstName",
+        },
+        {
+          type: "input",
+          message: "Last Name?",
+          name: "lastName",
+        },
+        {
+          type: "list",
+          message: "Select Employee Role:",
+          name: "roleID",
+          choices: roleList,
+        },
+        {
+          type: "input",
+          message: "Manager ID Number?",
+          name: "managerID",
+        },
+      ])
+      .then(function (answer) {
+        dbConnection.query(
+          "INSERT INTO empIdentity (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+          [answer.firstName, answer.lastName, answer.roleID, answer.managerID],
+          function (err, res) {
+            if (err) {
+              console.log(err);
+              return;
             }
-          );
-        });
-    });
-  }
+            viewAllEmployees(), appStart();
+          }
+        );
+      });
+  });
+}
 function updateEmployee() {
   inquirer
     .prompt([
