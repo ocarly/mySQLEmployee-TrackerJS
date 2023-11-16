@@ -13,6 +13,7 @@ const dbConnection = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: "empTracker_db",
 });
+
 dbConnection.connect(function (err) {
   if (err) throw err;
   console.log("Connected to empTracker_db Database.");
@@ -80,9 +81,10 @@ function viewAllEmployees() {
     console.log("VIEW ALL EMPLOYEES");
     console.log("\n");
     console.table(res);
-    appStart();
+    onDatabaseOperationComplete();
   });
 }
+
 function viewAllDepartments() {
   const query = `SELECT * FROM empDepartment`;
   dbConnection.query(query, (err, res) => {
@@ -91,9 +93,10 @@ function viewAllDepartments() {
     console.log("VIEW EMPLOYEE BY DEPARTMENT");
     console.log("\n");
     console.table(res);
-    appStart();
+    onDatabaseOperationComplete();
   });
 }
+
 function viewAllRoles() {
   const query = `SELECT * FROM empRole`;
   dbConnection.query(query, (err, res) => {
@@ -102,7 +105,7 @@ function viewAllRoles() {
     console.log("VIEW ALL EMPLOYEE ROLES");
     console.log("\n");
     console.table(res);
-    appStart();
+    onDatabaseOperationComplete();
   });
 }
 
@@ -119,7 +122,7 @@ function addADeparment() {
         [answer.deptName],
         function (err, res) {
           if (err) throw err;
-          viewAllDepartments(), appStart();
+          onDatabaseOperationComplete();
         }
       );
     });
@@ -149,7 +152,7 @@ function addARole() {
           name: "salaryTotal",
         },
         {
-          type: "list", 
+          type: "list",
           message: "Select the department:",
           name: "deptID",
           choices: empDepList,
@@ -164,14 +167,14 @@ function addARole() {
               console.log(err);
               return;
             }
-            viewAllRoles(), appStart();
+            onDatabaseOperationComplete();
           }
         );
       });
   });
 }
+
 function addAEmployee() {
-  // Fetch roles from the database
   dbConnection.query("SELECT * FROM empRole", function (err, res) {
     if (err) {
       console.log(err);
@@ -216,12 +219,13 @@ function addAEmployee() {
               console.log(err);
               return;
             }
-            viewAllEmployees(), appStart();
+            onDatabaseOperationComplete();
           }
         );
       });
   });
 }
+
 function updateEmployee() {
   inquirer
     .prompt([
@@ -230,7 +234,6 @@ function updateEmployee() {
         message: "Which employee would you like to update?",
         name: "employeeUpdate",
       },
-
       {
         type: "input",
         message: "Which role would you like to update to?",
@@ -244,37 +247,14 @@ function updateEmployee() {
         function (err, res) {
           if (err) throw err;
           console.table(res);
-          appStart();
+          onDatabaseOperationComplete();
         }
       );
     });
 }
 
-function viewAllDepartments() {
-  let query = "SELECT * FROM empDepartment";
-  dbConnection.query(query, function (err, res) {
-    if (err) throw err;
-    console.table(res);
-    appStart();
-  });
-}
-
-function viewAllRoles() {
-  let query = "SELECT * FROM empRole";
-  dbConnection.query(query, function (err, res) {
-    if (err) throw err;
-    console.table(res);
-    appStart();
-  });
-}
-
-function viewAllEmployees() {
-  let query = "SELECT * FROM empIdentity";
-  dbConnection.query(query, function (err, res) {
-    if (err) throw err;
-    console.table(res);
-    appStart();
-  });
+function onDatabaseOperationComplete() {
+  appStart();
 }
 
 function quit() {
